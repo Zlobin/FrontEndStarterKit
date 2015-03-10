@@ -228,8 +228,8 @@ gulp.task('bower_install', function () {
 // ##                   NPM lock down dependency versions.                       ##
 // ################################################################################
 gulp.task('npm_shrinkwrap', function () {
-    return gulp.src('./package.json')
-      .pipe(plugins.shrinkwrap());
+  return gulp.src('./package.json')
+    .pipe(plugins.shrinkwrap());
 });
 
 
