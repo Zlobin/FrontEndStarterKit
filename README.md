@@ -1,3 +1,5 @@
+Description (RU): http://zlob.in/2015/03/frontend-starter-kit-bazovaya-struktura-frontend-proekta/
+
 # Installation.
 
 ### Add repository for installing nodejs.
