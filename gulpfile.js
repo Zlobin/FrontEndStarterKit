@@ -7,7 +7,6 @@
 
 'use strict';
 
-// Include gulp & tools we'll use.
 var gulp = require('gulp');
 var del = require('del');
 var join = require('path').join;
@@ -55,7 +54,7 @@ var supportingBrowsers = [
 // ################################################################################
 // ##                            JavaScript linting.                             ##
 // ################################################################################
-gulp.task('js_hint', function () {
+gulp.task('js:hint', function () {
   var path = getPath({type: 'folder', name: 'js'});
 
   return gulp.src([
@@ -65,33 +64,34 @@ gulp.task('js_hint', function () {
     ])
     .pipe(plugins.jshint())
     .pipe(plugins.jshint.reporter('jshint-stylish'))
-    .pipe(plugins.size({title: 'Total uncompressed js files size:'}));
+    .pipe(plugins.size({title: 'Total uncompressed JavaScript files size:'}));
 });
 
 // ################################################################################
 // ##                          JavaScript compression.                           ##
 // ################################################################################
-gulp.task('js_compress', function () {
+gulp.task('js:compress', function () {
   var path = join(buildPath, 'js');
   var fileName = getPath({type: 'file', name: 'main_js'});
 
-  gulp.src(join(path, fileName))
+  return gulp.src(join(path, fileName))
     .pipe(plugins.sourcemaps.init())
-      .pipe(plugins.uglify())
-      .pipe(plugins.rename({
-        extname: '.min.js'
-      }))
+    .pipe(plugins.stripDebug())
+    .pipe(plugins.uglify())
+    .pipe(plugins.rename({
+      extname: '.min.js'
+    }))
     // For using ES6
     //.pipe(plugins.babel())
     .pipe(plugins.sourcemaps.write('.'))
     .pipe(gulp.dest(path))
-    .pipe(plugins.size({title: 'Total compressed js file size:'}));
+    .pipe(plugins.size({title: 'Total compressed JavaScript files (with source maps) size:'}));
 });
 
 // ################################################################################
-// ##                         JavaScript concatination.                          ##
+// ##                         JavaScript concatenation.                          ##
 // ################################################################################
-gulp.task('js_concat', function () {
+gulp.task('js:concat', function () {
   var path = getPath({type: 'folder', name: 'js'});
   var fileName = getPath({type: 'file', name: 'main_js'});
   var filesOrder = [
@@ -109,22 +109,23 @@ gulp.task('js_concat', function () {
         mode: '0666'
       }
     }))
-    .pipe(gulp.dest(join(buildPath, 'js')));
+    .pipe(gulp.dest(join(buildPath, 'js')))
+    .pipe(plugins.size({title: 'Total uncompressed main.js file size:'}));
 });
 
 // ################################################################################
 // ##                Relocation JavaScript vendor files (bower).                 ##
 // ################################################################################
-gulp.task('js_relocate_vendor', function () {
+gulp.task('js:relocate_vendor', function () {
   var path = getPath({type: 'folder', name: 'bower'});
   var files = [
     join(path, '**/*.min.js'),
     join(path, '**/*-min.js')
   ];
 
-  gulp.src(files)
+  return gulp.src(files)
     .pipe(plugins.sourcemaps.init())
-      .pipe(plugins.flatten())
+    .pipe(plugins.flatten())
     .pipe(plugins.sourcemaps.write('../maps'))
     .pipe(gulp.dest(join(buildPath, 'js/vendor')));
 });
@@ -132,18 +133,20 @@ gulp.task('js_relocate_vendor', function () {
 // ################################################################################
 // ##                                Lint SCSS.                                  ##
 // ################################################################################
-gulp.task('scss_lint', function () {
+gulp.task('css:lint', function () {
   var path = getPath({'type': 'folder', 'name': 'scss'});
 
-  gulp.src(join(path, '**/*.scss'))
+  return gulp.src(join(path, '**/*.scss'))
     .pipe(plugins.size({title: 'Total scss files size:'}))
-    .pipe(plugins.scssLint());
+    .pipe(plugins.scssLint({
+      'config': '.scsslint.yml'
+    }));
 });
 
 // ################################################################################
 // ##    Make css from scss, compile, add browser prefixes and minification.     ##
 // ################################################################################
-gulp.task('css_make', function () {
+gulp.task('css:compile', function () {
   var path = getPath({'type': 'folder', 'name': 'scss'});
 
   // For best performance, don't add Sass partials to `gulp.src`.
@@ -172,13 +175,13 @@ gulp.task('css_make', function () {
       })
     ))
     .pipe(gulp.dest(join(buildPath, 'css')))
-    .pipe(plugins.size({title: 'Total compressed css file size:'}));
+    .pipe(plugins.size({title: 'Total compressed css files (with source maps) size:'}));
 });
 
 // ################################################################################
 // ##                            Compress images.                                ##
 // ################################################################################
-gulp.task('image_compress', function () {
+gulp.task('image:compress', function () {
   var path = getPath({type: 'folder', name: 'images'});
 
   return gulp.src(join(path, '**/*'))
@@ -202,12 +205,12 @@ gulp.task('image_compress', function () {
 // ################################################################################
 // ##                           Glue html templates.                             ##
 // ################################################################################
-gulp.task('html_concat', function () {
+gulp.task('html:concat', function () {
   var path = getPath({'type': 'folder', 'name': 'templates'});
   var demoPath = getPath({'type': 'folder', 'name': 'demo'});
   var indexFile = getPath({'type': 'file', 'name': 'index_html'});
 
-  gulp.src([join(path, indexFile)])
+  return gulp.src([join(path, indexFile)])
     .pipe(plugins.fileInclude({
       prefix: '@@',
       basepath: '@file'
@@ -219,15 +222,15 @@ gulp.task('html_concat', function () {
 // ################################################################################
 // ##                         Install bower components.                          ##
 // ################################################################################
-gulp.task('bower_install', function () {
-  gulp.src(['./bower.json'])
+gulp.task('bower:install', function () {
+  return gulp.src(['./bower.json'])
     .pipe(plugins.install());
 });
 
 // ################################################################################
 // ##                   NPM lock down dependency versions.                       ##
 // ################################################################################
-gulp.task('npm_shrinkwrap', function () {
+gulp.task('npm:shrinkwrap', function () {
   return gulp.src('./package.json')
     .pipe(plugins.shrinkwrap());
 });
@@ -236,12 +239,12 @@ gulp.task('npm_shrinkwrap', function () {
 // ################################################################################
 // ##                          Inject bower components.                          ##
 // ################################################################################
-gulp.task('bower_autocomplete', function () {
+gulp.task('bower:autocomplete', function () {
   var wiredep = require('wiredep').stream;
   var path = getPath({'type': 'folder', 'name': 'demo'});
   var vendorPath = getPath({'type': 'folder', 'name': 'bower'});
 
-  gulp.src(join(path, '*.html'))
+  return gulp.src(join(path, '*.html'))
     .pipe(wiredep({
       directory: vendorPath,
       ignorePath: /^(\.\.\/)*\.\./
@@ -252,7 +255,7 @@ gulp.task('bower_autocomplete', function () {
 // ################################################################################
 // ##                             HTML replacing.                                ##
 // ################################################################################
-gulp.task('html_replace', function () {
+gulp.task('html:replace', function () {
   var path = getPath({'type': 'folder', 'name': 'demo'});
   var build = '/build';
 
@@ -279,7 +282,7 @@ gulp.task('html_replace', function () {
 // ################################################################################
 // ##                          Scan and compress HTML.                          ##
 // ################################################################################
-gulp.task('html_compress', function () {
+gulp.task('html:compress', function () {
   var path = getPath({'type': 'folder', 'name': 'demo'});
 
   return gulp.src(join(path, '**/*.html'))
@@ -303,11 +306,11 @@ gulp.task('clean', del.bind(null, [
 /**
  * Run test once and exit.
  */
-gulp.task('test', function () {
+gulp.task('js:test', function () {
   var karma = require('karma').server;
   var path = getPath({type: 'folder', name: 'js'});
 
-  karma.start({
+  return karma.start({
     configFile: join(path, 'tests/karma.conf.js'),
     singleRun: true
   });
@@ -316,7 +319,7 @@ gulp.task('test', function () {
 // ################################################################################
 // ##                            Update app version.                             ##
 // ################################################################################
-function updateVersion(importance) {
+function updateVersion (importance) {
   // get all the files to bump version in
   return gulp.src(['./package.json', './bower.json', './npm-shrinkwrap.json'])
     // Bump the version number in those files.
@@ -334,44 +337,50 @@ function updateVersion(importance) {
     */
 }
 
-gulp.task('patch', function () { return updateVersion('patch'); });
-gulp.task('feature', function () { return updateVersion('minor'); });
-gulp.task('release', function () { return updateVersion('major'); });
+gulp.task('patch', function () {
+  return updateVersion('patch');
+});
+gulp.task('feature', function () {
+  return updateVersion('minor');
+});
+gulp.task('release', function () {
+  return updateVersion('major');
+});
 
 // ################################################################################
 // ##                          Build production files.                           ##
 // ################################################################################
-gulp.task('build', ['clean', 'bower_install'], function (callback) {
+gulp.task('build', ['clean', 'bower:install'], function (callback) {
   runSequence(
     [
-      'npm_shrinkwrap',
-      'scss_lint',
-      'js_hint',
-      'js_concat',
-      'html_concat'
+      'npm:shrinkwrap',
+      'css:lint',
+      'js:hint',
+      'js:concat',
+      'html:concat'
       //'js_relocate_vendor'
     ],
     [
-      'css_make',
-      'bower_autocomplete'
+      'css:compile',
+      'bower:autocomplete'
     ],
     [
-      'html_replace'
+      'html:replace'
     ],
     [
-      'image_compress',
-      'js_compress',
-      'html_compress'
+      'image:compress',
+      'js:compress',
+      'html:compress'
     ],
     [
-      'test'
+      'js:test'
     ],
     callback);
 });
 
-// ################################################################################
-// ##                              Default task.                                 ##
-// ################################################################################
-gulp.task('default', function (callback) {
-  console.log('Please use params: build, test, patch, feature or release');
+gulp.task('help', function () {
+  console.log('The list of available tasks:');
+  plugins.taskListing();
 });
+
+gulp.task('default', ['help'], function () {});

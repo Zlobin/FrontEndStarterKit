@@ -1,7 +1,7 @@
 {
   "name": "FrontEndStarterKit",
   "description": "FrontEnd Starter Kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "build/js/main.js",
   "author": {
     "name": "Eugene Zlobin",
@@ -79,12 +79,14 @@
     "source-map": "^0.4.1",
     "through2": "^0.6.3",
     "uuid": "^2.0.1",
-    "wrappy": "^1.0.1"
+    "wrappy": "^1.0.1",
+    "gulp-task-listing": "^1.0.0",
+    "gulp-strip-debug": "^1.0.2"
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
-    "install": "npm cache clean --force && npm install && bower install --force && gulp install"
+    "install": "bower install --force && gulp build"
   }
 }
