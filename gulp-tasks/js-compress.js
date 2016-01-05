@@ -1,13 +1,10 @@
-// ################################################################################
-// ##                          JavaScript compression.                           ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     let buildPath = getPath({type: 'folder', name: 'build'});
     let path = join(buildPath, 'js');
     let fileName = getPath({type: 'file', name: 'main_js'});
 
-    gulp.src(join(path, fileName))
+    return gulp.src(join(path, fileName))
       .pipe(plugins.sourcemaps.init())
       .pipe(plugins.stripDebug())
       .pipe(plugins.uglify())

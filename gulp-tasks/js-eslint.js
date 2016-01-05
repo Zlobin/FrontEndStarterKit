@@ -1,11 +1,8 @@
-// ################################################################################
-// ##                            JavaScript linting.                             ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     let path = getPath({type: 'folder', name: 'js'});
 
-    gulp.src([
+    return gulp.src([
         join(path, '**/*.js'),
         // Exclude test path.
         join('!', path, 'tests/**')

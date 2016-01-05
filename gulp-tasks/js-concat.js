@@ -1,6 +1,3 @@
-// ################################################################################
-// ##                         JavaScript concatenation.                          ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     let path = getPath({type: 'folder', name: 'js'});
@@ -14,7 +11,7 @@ module.exports = function (gulp, plugins, getPath, join) {
         return join(path, key);
       });
 
-    gulp.src(filesOrder)
+    return gulp.src(filesOrder)
       .pipe(plugins.concat({
         path: fileName,
         stat: {

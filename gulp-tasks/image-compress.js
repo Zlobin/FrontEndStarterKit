@@ -1,12 +1,9 @@
-// ################################################################################
-// ##                            Compress images.                                ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     var path = getPath({type: 'folder', name: 'images'});
     var pngquant = require('imagemin-pngquant');
 
-    gulp.src(join(path, '**/*'))
+    return gulp.src(join(path, '**/*'))
       .pipe(plugins.size({title: 'Total images size before compression:'}))
       .pipe(plugins.cache(plugins.imagemin({
         progressive: true,

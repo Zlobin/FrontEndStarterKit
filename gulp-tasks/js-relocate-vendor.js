@@ -1,6 +1,3 @@
-// ################################################################################
-// ##                Relocation JavaScript vendor files (bower).                 ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     let path = getPath({type: 'folder', name: 'bower'});
@@ -10,7 +7,7 @@ module.exports = function (gulp, plugins, getPath, join) {
       join(path, '**/*-min.js')
     ];
 
-    gulp.src(files)
+    return gulp.src(files)
       .pipe(plugins.sourcemaps.init())
       .pipe(plugins.flatten())
       .pipe(plugins.sourcemaps.write('../maps'))

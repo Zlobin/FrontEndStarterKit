@@ -1,13 +1,10 @@
-// ################################################################################
-// ##                             HTML replacing.                                ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     let path = getPath({'type': 'folder', 'name': 'demo'});
-    let build = '/build';
+    let build = '/app/dist';
     let pkg = require('../package.json');
 
-    gulp.src(join(path, '**/*.html'))
+    return gulp.src(join(path, '**/*.html'))
       .pipe(plugins.htmlReplace({
         js: {
           src: join(build, 'js', getPath({'type': 'file', 'name': 'main_min_js'})),

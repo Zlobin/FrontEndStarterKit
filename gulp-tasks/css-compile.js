@@ -1,6 +1,3 @@
-// ################################################################################
-// ##    Make css from scss, compile, add browser prefixes and minification.     ##
-// ################################################################################
 module.exports = function (gulp, plugins, getPath, join) {
   return () => {
     let path = getPath({'type': 'folder', 'name': 'scss'});
@@ -13,7 +10,7 @@ module.exports = function (gulp, plugins, getPath, join) {
     ];
 
     // For best performance, don't add Sass partials to `gulp.src`.
-    gulp.src([
+    return gulp.src([
         join(path, '**/*.scss'),
         join('!', path, 'vendor/**')
       ])
