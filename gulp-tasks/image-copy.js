@@ -5,6 +5,7 @@ module.exports = function (gulp, plugins, getPath, join) {
     let files = join(imagesDirectory, '{,*/}*.{jpg,jpeg,png,gif}');
 
     return gulp.src(files)
+      .pipe(plugins.newer(join(buildPath, 'images')))
       .pipe(plugins.flatten())
       .pipe(gulp.dest(join(buildPath, 'images')));
   };

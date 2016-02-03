@@ -2311,6 +2311,18 @@
       "from": "gulp-match@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/gulp-match/-/gulp-match-1.0.0.tgz"
     },
+    "gulp-newer": {
+      "version": "1.1.0",
+      "from": "gulp-newer@*",
+      "resolved": "https://registry.npmjs.org/gulp-newer/-/gulp-newer-1.1.0.tgz",
+      "dependencies": {
+        "kew": {
+          "version": "0.7.0",
+          "from": "kew@>=0.7.0 <0.8.0",
+          "resolved": "https://registry.npmjs.org/kew/-/kew-0.7.0.tgz"
+        }
+      }
+    },
     "gulp-rename": {
       "version": "1.2.2",
       "from": "gulp-rename@>=1.2.2 <2.0.0",

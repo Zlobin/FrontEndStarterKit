@@ -5,6 +5,7 @@ module.exports = function (gulp, plugins, getPath, join) {
     let files = join(imagesDirectory, '{,*/}*.{eot,svg,ttf,woff,woff2}');
 
     return gulp.src(files)
+      .pipe(plugins.newer(join(buildPath, 'fonts')))
       .pipe(plugins.flatten())
       .pipe(gulp.dest(join(buildPath, 'fonts')));
   };

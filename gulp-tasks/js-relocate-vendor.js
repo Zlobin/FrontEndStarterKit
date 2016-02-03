@@ -8,6 +8,7 @@ module.exports = function (gulp, plugins, getPath, join) {
     ];
 
     return gulp.src(files)
+      .pipe(plugins.newer(join(buildPath, 'js/vendor')))
       .pipe(plugins.sourcemaps.init())
       .pipe(plugins.flatten())
       .pipe(plugins.sourcemaps.write('../maps'))
